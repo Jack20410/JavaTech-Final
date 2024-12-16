@@ -34,4 +34,18 @@ public class MainController {
 
         return "manager/index"; // Thymeleaf template name
     }
+
+    //Salesperson dashboard route
+    @GetMapping("/salesperson/index")
+    public String salespersonDashboard(Model model, @AuthenticationPrincipal UserDetails currentUser) {
+        // Fetch logged-in user details
+        String email = currentUser.getUsername();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found: " + email));
+
+        // Pass user data to the view
+        model.addAttribute("user", user);
+
+        return "salesperson/index"; // Thymeleaf template name
+    }
 }

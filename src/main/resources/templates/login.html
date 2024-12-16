@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login Page</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <h3 class="text-center text-secondary mt-5 mb-3">User Login</h3>
+            <!-- Display error message if present -->
+            <div class="alert alert-danger" role="alert" th:if="${param.error}">
+                Invalid email or password. Please try again.
+            </div>
+            <div class="alert alert-success" role="alert" th:if="${param.logout}">
+                You have been successfully logged out.
+            </div>
+            <form class="border rounded w-100 mb-5 mx-auto px-3 pt-3 bg-light" method="POST" action="/login">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input id="email" type="email" class="form-control" name="username" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input id="password" type="password" class="form-control" name="password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-success px-5">Login</button>
+                </div>
+                <div class="form-group text-center">
+                    <p>Forgot password? <a href="/forgot-password">Click here</a></p>
+                    <p>Don't have an account? <a href="/register">Sign Up</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

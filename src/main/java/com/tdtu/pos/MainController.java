@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.List;
+
 @Controller
 public class MainController {
 
@@ -48,4 +50,13 @@ public class MainController {
 
         return "salesperson/index"; // Thymeleaf template name
     }
+
+    @GetMapping("/manager/employees")
+    public String manageEmployees(Model model) {
+        // Fetch all users with ROLE_SALESPERSON
+        List<User> salespersons = userRepository.findByRole(User.Role.ROLE_SALESPERSON);
+        model.addAttribute("salespersons", salespersons);
+        return "manager/employees"; // Return the Thymeleaf template
+    }
+
 }

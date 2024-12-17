@@ -18,10 +18,20 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
+    public List<Product> getProductsByCategory(String category) {
+        return productRepository.findByCategory(category);
+    }
+
     public Product saveProduct(Product product) {
         return productRepository.save(product);
     }
+
+    public void deleteProductById(int id) {
+        productRepository.deleteById(id);
+    }
+
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
+
 }

@@ -3,51 +3,342 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Employees</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <title>Employee Management</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+        }
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+        .content {
+            flex: 1;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+        }
+        .switch input {
+            display: none;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+        }
+        .slider.round {
+            border-radius: 20px;
+        }
+        .slider.round:before {
+            border-radius: 50%;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+        }
+        input:checked + .slider {
+            background-color: #4caf50;
+        }
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+    </style>
 </head>
-<body>
-<!-- Navigation Bar -->
+<body class="wrapper">
+
+<!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="/manager/index">Manager Dashboard</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item"><a class="nav-link " href="/manager/products">Products</a></li>
+            <li class="nav-item active"><a class="nav-link" href="/manager/employees">Employees</a></li>
+            <li class="nav-item"><a class="nav-link" href="/reports">Reports</a></li>
+            <li class="nav-item dropdown" th:if="${users != null}">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+                    <img th:src="@{'/' + ${users.avatar}}" alt="Avatar" class="rounded-circle" width="30"> Admin
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="/profile">Profile</a>
+                    <form id="logout-form" method="post" action="/logout" style="display: none;">
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+                    </form>
+                    <a class="dropdown-item" href="#" onclick="document.getElementById('logout-form').submit();">
+                        Logout
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
 </nav>
 
-<!-- Employees Table -->
-<div class="container mt-4">
-    <h2 class="mb-4">Salesperson List</h2>
-    <table class="table table-striped table-bordered">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Full Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="salesperson : ${salespersons}">
-            <td th:text="${salesperson.id}">1</td>
-            <td th:text="${salesperson.fullName}">John Doe</td>
-            <td th:text="${salesperson.email}">john@example.com</td>
-            <td th:text="${salesperson.role}">ROLE_SALESPERSON</td>
-            <td>
-                <a href="#" class="btn btn-primary btn-sm">Edit</a>
-                <a href="#" class="btn btn-danger btn-sm">Delete</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<div class="content">
+    <div class="container mt-4">
+        <h2 class="text-center">Employee Management</h2>
+        <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addEmployeeModal">Add New Employee</button>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Avatar</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${salespersons}">
+                <td th:text="${user.id}"></td>
+                <td>
+                    <img th:src="@{'/' + ${user.avatar}}" alt="Avatar" class="img-thumbnail" width="50" height="50">
+                </td>
+                <td th:text="${user.fullName}"></td>
+                <td th:text="${user.email}"></td>
+                <td>
+                    <label class="switch">
+                        <input type="checkbox" class="toggle-status" th:checked="${user.active}" th:attr="data-id=${user.id}">
+                        <span class="slider round"></span>
+                    </label>
+                </td>
+                <td>
+                    <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editEmployeeModal"
+                            th:attr="data-id=${user.id}, data-fullName=${user.fullName}, data-email=${user.email}, data-active=${user.active}">
+                        Edit
+                    </button>
+                    <button class="btn btn-danger btn-sm delete-user" th:attr="data-id=${user.id}">Delete</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Employee Modal -->
+<div class="modal fade" id="addEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addEmployeeModalLabel">Add New Employee</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addEmployeeForm">
+                    <div class="form-group">
+                        <label for="addFullName">Full Name</label>
+                        <input type="text" class="form-control" id="addFullName" placeholder="Enter full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="addEmail">Email</label>
+                        <input type="email" class="form-control" id="addEmail" placeholder="Enter email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="addPassword">Password</label>
+                        <input type="password" class="form-control" id="addPassword" placeholder="Enter password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="addAvatar">Upload Avatar</label>
+                        <input type="file" class="form-control" id="addAvatar">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveNewEmployee">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Employee Modal -->
+<div class="modal fade" id="editEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="editEmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editEmployeeModalLabel">Edit Employee</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editEmployeeForm">
+                    <input type="hidden" id="editId">
+                    <div class="form-group">
+                        <label for="editFullName">Full Name</label>
+                        <input type="text" class="form-control" id="editFullName" placeholder="Enter full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email</label>
+                        <input type="email" class="form-control" id="editEmail" placeholder="Enter email">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPassword">Password</label>
+                        <input type="password" class="form-control" id="editPassword" placeholder="Leave blank to keep the current password">
+                    </div>
+                    <div class="form-group">
+                        <label for="editActive">Active</label>
+                        <label class="switch">
+                            <input type="checkbox" id="editActive">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAvatar">Upload Avatar</label>
+                        <input type="file" class="form-control" id="editAvatar">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveEditedEmployee">Save Changes</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Footer -->
-<footer class="bg-dark text-white text-center py-3 mt-4">
+<footer>
     &copy;TDTU 2024 POS System. All Rights Reserved.
 </footer>
 
-<!-- Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Script to Save User -->
+<script>
+    $(document).ready(function () {
+        const csrfToken = $("meta[name='_csrf']").attr("content");
+        const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+        $.ajaxSetup({
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(csrfHeader, csrfToken);
+            }
+        });
+
+        // Save New Employee
+        $('#saveNewEmployee').click(function () {
+            const fullName = $('#addFullName').val();
+            const email = $('#addEmail').val();
+            const password = $('#addPassword').val();
+            const avatarFile = $('#addAvatar')[0].files[0];
+            const formData = new FormData();
+            formData.append('fullName', fullName);
+            formData.append('email', email);
+            formData.append('password', password);
+            formData.append('avatarFile', avatarFile);
+            $.ajax({
+                url: '/api/users',
+                method: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function () {
+                    alert('New employee added successfully!');
+                    location.reload();
+                },
+                error: function () {
+                    alert('Failed to add employee.');
+                }
+            });
+        });
+        // Save Edited Employee
+        $('#saveEditedEmployee').click(function () {
+            const id = $('#editId').val();
+            const fullName = $('#editFullName').val();
+            const email = $('#editEmail').val();
+            const password = $('#editPassword').val();
+            const active = $('#editActive').is(':checked');
+            const avatarFile = $('#editAvatar')[0].files[0];
+
+            const formData = new FormData();
+            formData.append('id', id);
+            formData.append('fullName', fullName);
+            formData.append('email', email);
+            formData.append('password', password);
+            formData.append('active', active);
+            formData.append('avatarFile', avatarFile);
+
+            $.ajax({
+                url: `/api/users/${id}`,
+                method: 'PUT',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function () {
+                    alert('Employee updated successfully!');
+                    location.reload();
+                },
+                error: function () {
+                    alert('Failed to update employee.');
+                }
+            });
+        });
+        // Prefill Edit Modal
+        $('#editEmployeeModal').on('show.bs.modal', function (event) {
+            const button = $(event.relatedTarget);
+            const id = button.data('id');
+            const fullName = button.data('fullname');
+            const email = button.data('email');
+            const active = button.data('active');
+
+            $('#editId').val(id);
+            $('#editFullName').val(fullName);
+            $('#editEmail').val(email);
+            $('#editPassword').val('');
+            $('#editActive').prop('checked', active === 'true');
+        });
+
+        // Delete Employee
+        $('.delete-user').click(function () {
+            const id = $(this).data('id');
+            if (confirm('Are you sure you want to delete this employee?')) {
+                $.ajax({
+                    url: `/api/users/${id}`,
+                    method: 'DELETE',
+                    success: function () {
+                        alert('Employee deleted successfully!');
+                        location.reload();
+                    },
+                    error: function () {
+                        alert('Failed to delete employee.');
+                    }
+                });
+            }
+        });
+    });
+</script>
+
 </body>
 </html>

@@ -14,7 +14,7 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
-            <h3 class="text-center text-secondary mt-5 mb-3">User Login</h3>
+            <h3 class="text-center text-secondary mt-5 mb-3">Point Of Sale Login</h3>
             <!-- Display error message if present -->
             <div class="alert alert-danger" role="alert" th:if="${param.error}">
                 Invalid email or password. Please try again.
@@ -35,10 +35,7 @@
                 <div class="form-group text-center">
                     <button type="submit" class="btn btn-success px-5">Login</button>
                 </div>
-                <div class="form-group text-center">
-                    <p>Forgot password? <a href="/forgot-password">Click here</a></p>
-                    <p>Don't have an account? <a href="/register">Sign Up</a></p>
-                </div>
+
             </form>
         </div>
     </div>

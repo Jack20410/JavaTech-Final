@@ -16,8 +16,8 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav ml-auto">
-      <li class="nav-item"><a class="nav-link" href="/manager/products">Products</a></li>
-      <li class="nav-item"><a class="nav-link" href="/employees">Employees</a></li>
+      <li class="nav-item active"><a class="nav-link " href="/manager/products">Products</a></li>
+      <li class="nav-item"><a class="nav-link" href="/manager/employees">Employees</a></li>
       <li class="nav-item"><a class="nav-link" href="/reports">Reports</a></li>
       <li class="nav-item dropdown" th:if="${user != null}">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
@@ -40,7 +40,6 @@
 <!-- Page Content -->
 <div class="container mt-4">
   <h2 class="text-center mb-4">Product List</h2>
-
   <!-- Category Filter -->
   <div class="mb-3">
     <form th:action="@{/manager/products}" method="get" class="form-inline mb-3">
@@ -56,12 +55,12 @@
       </select>
       <button type="submit" class="btn btn-primary">Filter</button>
     </form>
+  <!-- Add Product Button -->
+    <div class="mb-3">
+      <a href="/manager/products/add" class="btn btn-success">Add Product</a>
+    </div>
   </div>
 
-  <!-- Add Product Button -->
-  <div class="mb-3 text-right">
-    <a href="/manager/products/add" class="btn btn-success">Add Product</a>
-  </div>
 
   <!-- Product Table -->
   <table class="table table-bordered">

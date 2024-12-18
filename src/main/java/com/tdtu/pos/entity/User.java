@@ -26,10 +26,15 @@ public class User {
     private Role role;
 
     @Column(nullable = false)
-    private Boolean isActive = true;
+    private Boolean isActive ;
 
     @Column(nullable = false)
     private String avatar;
+
+    public enum Role {
+        ROLE_MANAGER,
+        ROLE_SALESPERSON,
+    }
 
     // Getters and Setters
     public int getId() {
@@ -88,9 +93,5 @@ public class User {
         this.avatar = avatar;
     }
 
-    public enum Role {
-        ROLE_MANAGER,
-        ROLE_SALESPERSON,
-    }
 
 }

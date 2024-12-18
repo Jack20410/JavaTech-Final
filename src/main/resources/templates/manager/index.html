@@ -30,15 +30,15 @@
 <body>
 <div class="wrapper">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">Manager Dashboard</a>
+        <a class="navbar-brand" href="manager/index">Manager Dashboard</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item"><a class="nav-link" href="/manager/products">Products</a></li>
-                <li class="nav-item"><a class="nav-link" href="/employees">Employees</a></li>
-                <li class="nav-item"><a class="nav-link" href="/reports">Reports</a></li>
+                <li class="nav-item"><a class="nav-link" href="/manager/employees">Employees</a></li>
+                <li class="nav-item"><a class="nav-link" href="/manager/reports">Reports</a></li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
                         <img th:src="@{'/'+${user.avatar}}" alt="Avatar" class="rounded-circle" width="30"> Admin
@@ -63,7 +63,7 @@
                     <div class="card text-white bg-primary mb-3">
                         <div class="card-body">
                             <h5 class="card-title">Total Sales</h5>
-                            <p class="card-text">$25,000</p>
+                            <p class="card-text">$25,000 Chưa sửa</p>
                         </div>
                     </div>
                 </div>
@@ -71,7 +71,7 @@
                     <div class="card text-white bg-success mb-3">
                         <div class="card-body">
                             <h5 class="card-title">Products</h5>
-                            <p class="card-text">150</p>
+                            <p class="card-text" th:text="${productCount}">0</p>
                         </div>
                     </div>
                 </div>
@@ -79,7 +79,7 @@
                     <div class="card text-white bg-warning mb-3">
                         <div class="card-body">
                             <h5 class="card-title">Employees</h5>
-                            <p class="card-text">12</p>
+                            <p class="card-text" th:text="${employeeCount}">0</p>
                         </div>
                     </div>
                 </div>
@@ -87,7 +87,7 @@
                     <div class="card text-white bg-info mb-3">
                         <div class="card-body">
                             <h5 class="card-title">Customers</h5>
-                            <p class="card-text">85</p>
+                            <p class="card-text">85 chưa sửa </p>
                         </div>
                     </div>
                 </div>
@@ -101,7 +101,7 @@
                     <a href="/manager/employees" class="btn btn-outline-success btn-block">Manage Employees</a>
                 </div>
                 <div class="col-md-4">
-                    <a href="/reports" class="btn btn-outline-warning btn-block">View Reports</a>
+                    <a href="/manager/reports" class="btn btn-outline-warning btn-block">View Reports</a>
                 </div>
             </div>
         </div>

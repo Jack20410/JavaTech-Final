@@ -12,7 +12,7 @@ public class Product {
     private int id;
 
     @Column(nullable = false)
-    private String name;
+    public String name;
 
     @Column(nullable = false)
     private String category;

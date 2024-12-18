@@ -17,11 +17,19 @@
             <li class="nav-item"><a class="nav-link" href="/reports">My Reports</a></li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-                    <img src="/images/avatar/avatar.png" alt="Avatar" class="rounded-circle" width="30"> Salesperson
+                    <img th:src="@{'/'+${user.avatar}}" alt="Avatar" class="rounded-circle" width="30">
+                    <span th:text="${user.fullName}">Salesperson</span>
+
                 </a>
                 <div class="dropdown-menu dropdown-menu-right">
                     <a class="dropdown-item" href="/profile">Profile</a>
-                    <a class="dropdown-item" href="/logout">Logout</a>
+                    <form id="logout-form" method="post" action="/logout" style="display: none;">
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+                    </form>
+
+                    <a class="dropdown-item" href="#" onclick="document.getElementById('logout-form').submit();">
+                        Logout
+                    </a>
                 </div>
             </li>
         </ul>

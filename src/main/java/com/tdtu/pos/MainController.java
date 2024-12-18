@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.List;
+
 @Controller
 public class MainController {
 
@@ -34,4 +36,27 @@ public class MainController {
 
         return "manager/index"; // Thymeleaf template name
     }
+
+    //Salesperson dashboard route
+    @GetMapping("/salesperson/index")
+    public String salespersonDashboard(Model model, @AuthenticationPrincipal UserDetails currentUser) {
+        // Fetch logged-in user details
+        String email = currentUser.getUsername();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found: " + email));
+
+        // Pass user data to the view
+        model.addAttribute("user", user);
+
+        return "salesperson/index"; // Thymeleaf template name
+    }
+
+    @GetMapping("/manager/employees")
+    public String manageEmployees(Model model) {
+        // Fetch all users with ROLE_SALESPERSON
+        List<User> salespersons = userRepository.findByRole(User.Role.ROLE_SALESPERSON);
+        model.addAttribute("salespersons", salespersons);
+        return "manager/employees"; // Return the Thymeleaf template
+    }
+
 }

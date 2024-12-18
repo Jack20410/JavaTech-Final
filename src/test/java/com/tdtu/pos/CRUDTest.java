@@ -36,11 +36,11 @@ public class CRUDTest {
     @Test
     public void testCreateUser() {
         User user = new User();
-        user.setFullName("admin");
-        user.setEmail("admin@admin.com");
-        user.setPassword("admin");
+        user.setFullName("tung");
+        user.setEmail("tung@admin.com");
+        user.setPassword("tung");
         user.setAvatar("images/avatar/avatar.png");// Raw password
-        user.setRole(User.Role.ROLE_MANAGER);
+        user.setRole(User.Role.ROLE_SALESPERSON);
         user.setActive(true);
 
         userService.saveUser(user);

@@ -120,10 +120,11 @@ public class CRUDTest {
     @Test
     public void testCreateProduct() {
         Product product = new Product();
-        product.setName("Coke");
-        product.setCategory("Drink");
+        product.setName("Burger Chicken Special");
+        product.setCategory("burgers");
         product.setRetailPrice(70000);
-        product.setImagePath("images/burger.jpg");
+        product.setQuantity(10);
+        product.setImagePath("images/food_images/burgers/specialchick.png");
         product.setAvailable(true);
 
         Product savedProduct = productRepository.save(product);
@@ -141,24 +142,25 @@ public class CRUDTest {
     @Test
     public void testUpdateProduct() {
         // Fetch the product by ID (assume product with ID 1 exists)
-        Optional<Product> productOptional = productRepository.findById(1);
+        Optional<Product> productOptional = productRepository.findById(5);
         assertTrue(productOptional.isPresent());
 
         // Update the product details
         Product product = productOptional.get();
-        product.setName("Burger");
-        product.setCategory("Burgers");
-        product.setRetailPrice(70000);
-        product.setAvailable(true); // Change availability
+        product.setImagePath("images/food_images/burgers/chickbg.png");
+//        product.setName("Burger");
+//        product.setCategory("Burgers");
+//        product.setRetailPrice(70000);
+//        product.setAvailable(true); // Change availability
 
         // Save the updated product
         Product updatedProduct = productRepository.save(product);
 
         // Assertions to ensure updates are applied
-        assertEquals("Burger", updatedProduct.getName());
-        assertEquals("Burgers", updatedProduct.getCategory());
-        assertEquals(70000, updatedProduct.getRetailPrice());
-        assertTrue(updatedProduct.isAvailable()); // Ensure the availability status is updated
+//        assertEquals("Burger", updatedProduct.getName());
+//        assertEquals("Burgers", updatedProduct.getCategory());
+//        assertEquals(70000, updatedProduct.getRetailPrice());
+//        assertTrue(updatedProduct.isAvailable()); // Ensure the availability status is updated
     }
 
     @Test

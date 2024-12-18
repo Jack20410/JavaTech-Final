@@ -5,93 +5,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manager Dashboard</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Ensure the footer stays at the bottom */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+        .content {
+            flex: 1;
+        }
+        footer {
+            background-color: #343a40; /* Dark background */
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+    </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Manager Dashboard</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item"><a class="nav-link" href="/products">Products</a></li>
-            <li class="nav-item"><a class="nav-link" href="/employees">Employees</a></li>
-            <li class="nav-item"><a class="nav-link" href="/reports">Reports</a></li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-                    <img th:src="@{'/'+${user.avatar}}" alt="Avatar" class="rounded-circle" width="30"> Admin
-                </a>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="/profile">Profile</a>
-                    <form id="logout-form" method="post" action="/logout" style="display: none;">
-                        <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
-                    </form>
-
-                    <a class="dropdown-item" href="#" onclick="document.getElementById('logout-form').submit();">
-                        Logout
+<div class="wrapper">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Manager Dashboard</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a class="nav-link" href="/manager/products">Products</a></li>
+                <li class="nav-item"><a class="nav-link" href="/employees">Employees</a></li>
+                <li class="nav-item"><a class="nav-link" href="/reports">Reports</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+                        <img th:src="@{'/'+${user.avatar}}" alt="Avatar" class="rounded-circle" width="30"> Admin
                     </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="/profile">Profile</a>
+                        <form id="logout-form" method="post" action="/logout" style="display: none;">
+                            <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+                        </form>
+                        <a class="dropdown-item" href="#" onclick="document.getElementById('logout-form').submit();">Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
+    <div class="content">
+        <!-- Dashboard Content -->
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Sales</h5>
+                            <p class="card-text">$25,000</p>
+                        </div>
+                    </div>
                 </div>
-            </li>
+                <div class="col-md-3">
+                    <div class="card text-white bg-success mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Products</h5>
+                            <p class="card-text">150</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Employees</h5>
+                            <p class="card-text">12</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-info mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Customers</h5>
+                            <p class="card-text">85</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        </ul>
+            <div class="row">
+                <div class="col-md-4">
+                    <a href="/manager/products" class="btn btn-outline-primary btn-block">Manage Products</a>
+                </div>
+                <div class="col-md-4">
+                    <a href="/employees" class="btn btn-outline-success btn-block">Manage Employees</a>
+                </div>
+                <div class="col-md-4">
+                    <a href="/reports" class="btn btn-outline-warning btn-block">View Reports</a>
+                </div>
+            </div>
+        </div>
     </div>
-</nav>
 
-
-<!-- Dashboard Content -->
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Total Sales</h5>
-                    <p class="card-text">$25,000</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Products</h5>
-                    <p class="card-text">150</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Employees</h5>
-                    <p class="card-text">12</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-info mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Customers</h5>
-                    <p class="card-text">85</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4">
-            <a href="/products" class="btn btn-outline-primary btn-block">Manage Products</a>
-        </div>
-        <div class="col-md-4">
-            <a href="/manager/employees" class="btn btn-outline-success btn-block">Manage Employees</a>
-        </div>
-        <div class="col-md-4">
-            <a href="/reports" class="btn btn-outline-warning btn-block">View Reports</a>
-        </div>
-    </div>
+    <footer>
+        &copy;TDTU 2024 POS System. All Rights Reserved.
+    </footer>
 </div>
-
-<footer class="bg-dark text-white text-center py-3 mt-4">
-    &copy;TDTU 2024 POS System. All Rights Reserved.
-</footer>
 <!-- Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

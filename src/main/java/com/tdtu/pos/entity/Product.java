@@ -21,12 +21,36 @@ public class Product {
     private double retailPrice;
 
     @Column(nullable = false)
-    private boolean isAvailable = true;
+    private boolean isAvailable;
 
+    @Column(nullable = false)
+    private int quantity ;
+
+    @Column(nullable = true)
+    private String description;
+
+    @Column(nullable = true)
     private String barcode;
 
     private LocalDateTime createdDate = LocalDateTime.now();
-    private String imagePath; // New field for image storage
+    private String imagePath;
+
+    public Product() {}
+
+    public Product(int id, String name, String category, double retailPrice,
+                   boolean isAvailable, int quantity, String description,
+                   String barcode, LocalDateTime createdDate, String imagePath) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.retailPrice = retailPrice;
+        this.isAvailable = isAvailable;
+        this.quantity = quantity;
+        this.description = description;
+        this.barcode = barcode;
+        this.createdDate = createdDate;
+        this.imagePath = imagePath;
+    }
 
     // Getters and Setters
     public int getId() {
@@ -91,5 +115,21 @@ public class Product {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

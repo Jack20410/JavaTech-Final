@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.File;
 import java.io.IOException;
 
 import java.nio.file.Files;
@@ -30,8 +29,6 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    private static final String UPLOAD_DIR = "src/main/resources/static/images/food_images/";
-
     @GetMapping("/manager/products")
     public String showProductsPage(Model model) {
         List<Product> products = productService.getAllProducts();
@@ -43,7 +40,6 @@ public class ProductController {
 
         return "manager/products/index";
     }
-
 
     @GetMapping
     public String getAllProducts(@RequestParam(value = "category", required = false) String category, Model model) {
@@ -151,23 +147,13 @@ public class ProductController {
         return "redirect:/manager/products";
     }
 
-    private void saveImageFile(Product product, MultipartFile imageFile) {
-        try {
-            String categoryDir = UPLOAD_DIR + product.getCategory();
-            File directory = new File(categoryDir);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-            // Ensure unique filenames for uploaded images
-            String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
-            String filePath = categoryDir + "/" + fileName;
-            imageFile.transferTo(new File(filePath));
-
-            // Set the correct relative image path
-            product.setImagePath("images/food_images/" + product.getCategory() + "/" + fileName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    // Salesperson: View Products Only
+    @PreAuthorize("hasRole('SALESPERSON')")
+    @GetMapping("/sales")
+    public String viewProductsForSales(Model model) {
+        List<Product> products = productService.getAllProducts();
+        model.addAttribute("products", products);
+        return "salesperson/sales"; // Salesperson's sales page
     }
 
 }

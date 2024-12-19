@@ -1,9 +1,11 @@
 package com.tdtu.pos;
 
+import com.tdtu.pos.entity.Product;
 import com.tdtu.pos.entity.User;
 import com.tdtu.pos.repository.ProductRepository;
 import com.tdtu.pos.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -12,7 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class MainController {
@@ -65,6 +69,27 @@ public class MainController {
         return "salesperson/index"; // Thymeleaf template name
     }
 
+    @GetMapping("/sales")
+    public String processSales() {
+        return "salesperson/sales"; // Thymeleaf template path for sales.html
+    }
+
+    // Salesperson: View Products for Sales
+    @PreAuthorize("hasRole('SALESPERSON')")
+    @GetMapping("/salesperson/sales")
+    public String viewProductsForSales(Model model) {
+        // Fetch all products grouped by category
+        List<String> categories = productRepository.findDistinctCategories();
+        Map<String, List<Product>> productsByCategory = new HashMap<>();
+        for (String category : categories) {
+            List<Product> products = productRepository.findByCategoryOrderByNameAsc(category);
+            productsByCategory.put(category, products);
+        }
+
+        // Add to model
+        model.addAttribute("productsByCategory", productsByCategory);
+        return "salesperson/sales"; // Path to salesperson's sales page
+    }
 
     @GetMapping("/manager/employees")
     public String manageEmployees(Model model) {

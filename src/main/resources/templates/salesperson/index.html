@@ -5,14 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Salesperson Dashboard</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Ensure the footer stays at the bottom */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+        .content {
+            flex: 1;
+        }
+        footer {
+            background-color: #343a40; /* Dark background */
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+    </style>
 </head>
 <body>
 <!-- Navigation Bar -->
+<div class="wrapper">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Salesperson Dashboard</a>
+    <a class="navbar-brand" href="salesperson/index">Salesperson Dashboard</a>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item"><a class="nav-link" href="/sales">Process Sales</a></li>
+            <li class="nav-item"><a class="nav-link" href="salesperson/sales">Process Sales</a></li>
             <li class="nav-item"><a class="nav-link" href="/customers">Customers</a></li>
             <li class="nav-item"><a class="nav-link" href="/reports">My Reports</a></li>
             <li class="nav-item dropdown">
@@ -36,48 +58,51 @@
     </div>
 </nav>
 
-<!-- Dashboard Content -->
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Daily Sales</h5>
-                    <p class="card-text">$1,200</p>
+    <div class="content">
+    <!-- Dashboard Content -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Daily Sales</h5>
+                        <p class="card-text">$1,200</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Transactions</h5>
+                        <p class="card-text">25</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Top Product</h5>
+                        <p class="card-text">Burger</p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Transactions</h5>
-                    <p class="card-text">25</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Top Product</h5>
-                    <p class="card-text">Burger</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <a href="/sales" class="btn btn-outline-primary btn-block">Start Sale</a>
-        </div>
-        <div class="col-md-6">
-            <a href="/customers" class="btn btn-outline-success btn-block">View Customers</a>
+        <div class="row">
+            <div class="col-md-6">
+                <a href="/salesperson/sales" class="btn btn-outline-primary btn-block">Start Sale</a>
+            </div>
+            <div class="col-md-6">
+                <a href="/customers" class="btn btn-outline-success btn-block">View Customers</a>
+            </div>
         </div>
     </div>
-</div>
+    </div>
 
 <footer class="bg-dark text-white text-center py-3 mt-4">
     &copy;TDTU 2024 POS System. All Rights Reserved.
 </footer>
+</div>
 <!-- Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

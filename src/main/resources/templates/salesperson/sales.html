@@ -71,7 +71,7 @@
                  <!-- Selected products will appear here dynamically -->
                  </tbody>
                </table>
-               <div class="text-right">
+               <div class="text-left">
                  <h5>Total Price: <span id="total-price">0</span></h5>
                </div>
              </div>
@@ -132,15 +132,17 @@
              </button>
            </div>
            <div class="modal-body">
+             <!-- Customer Form -->
              <form id="purchase-form">
                <div class="form-group">
-                 <label for="customer-name-modal">Customer Name</label>
-                 <input type="text" id="customer-name-modal" class="form-control" required>
+                 <label for="customer-name">Customer Name</label>
+                 <input type="text" id="customer-name" class="form-control" placeholder="Enter customer name" required>
                </div>
                <div class="form-group">
-                 <label for="customer-phone-modal">Phone Number</label>
-                 <input type="text" id="customer-phone-modal" class="form-control" required>
+                 <label for="customer-phone">Phone Number</label>
+                 <input type="text" id="customer-phone" class="form-control" placeholder="Enter phone number" required>
                </div>
+               <!-- Payment Method -->
                <div class="form-group">
                  <label for="payment-method">Payment Method</label>
                  <select id="payment-method" class="form-control" required>
@@ -148,10 +150,11 @@
                    <option value="qr">Scan QR Code</option>
                  </select>
                </div>
+               <!-- Cash Payment Fields -->
                <div id="cash-payment" class="form-group" style="display: none;">
                  <label for="cash-received">Cash Received</label>
-                 <input type="number" id="cash-received" class="form-control" min="0">
-                 <p class="mt-2">Change: $<span id="change-amount">0.00</span></p>
+                 <input type="number" id="cash-received" class="form-control" placeholder="Enter cash received" min="0">
+                 <p class="mt-2">Change: <span id="change-amount">0</span></p>
                </div>
              </form>
            </div>
@@ -251,26 +254,124 @@
       updateCart();
     }
   });
-  // Toggle cash payment fields
-  $('#payment-method').on('change', function () {
-    if ($(this).val() === 'cash') {
-      $('#cash-payment').show();
+
+  // Toggle cash payment fields based on payment method
+  document.getElementById('payment-method').addEventListener('change', function () {
+    const cashPaymentSection = document.getElementById('cash-payment');
+    if (this.value === 'cash') {
+      cashPaymentSection.style.display = 'block';
     } else {
-      $('#cash-payment').hide();
+      cashPaymentSection.style.display = 'none';
     }
   });
 
-  // Calculate change
-  $('#cash-received').on('input', function () {
-    const totalPrice = parseFloat($('#total-price').text());
-    const cashReceived = parseFloat($(this).val());
-    const change = (cashReceived - totalPrice).toFixed(2);
-    $('#change-amount').text(change > 0 ? change : '0.00');
+  // Calculate change dynamically
+  document.getElementById('cash-received').addEventListener('input', function () {
+    const totalPrice = parseFloat(document.getElementById('total-price').textContent.replace(/,/g, ''));
+    const cashReceived = parseFloat(this.value);
+    const change = cashReceived - totalPrice;
+    document.getElementById('change-amount').textContent = change > 0 ? change.toLocaleString() : '0';
+  });
+
+  // Generate PDF invoice on Print Bill
+  document.getElementById('print-bill').addEventListener('click', function () {
+    const { jsPDF } = window.jspdf; // Access jsPDF from the global object
+    const doc = new jsPDF();
+
+    const customerName = document.getElementById('customer-name').value;
+    const customerPhone = document.getElementById('customer-phone').value;
+
+    if (!customerName || !customerPhone) {
+      alert('Please fill in customer details');
+      return;
+    }
+
+    // Invoice Header
+    doc.setFontSize(18);
+    doc.text('INVOICE', 105, 15, { align: 'center' });
+    doc.setFontSize(12);
+
+    // Customer Information
+    doc.text('Customer Information', 10, 25);
+    doc.line(10, 27, 200, 27); // Line separator
+    doc.text(`Name: ${customerName}`, 10, 35);
+    doc.text(`Phone: ${customerPhone}`, 10, 42);
+
+    // Product Table Header
+    let y = 50;
+    doc.text('Products', 10, y);
+    doc.line(10, y + 2, 200, y + 2); // Line separator
+
+    y += 10;
+    doc.setFontSize(10);
+    doc.text('Name', 10, y);
+    doc.text('Price', 80, y);
+    doc.text('Quantity', 120, y);
+    doc.text('Total', 160, y);
+    doc.line(10, y + 2, 200, y + 2); // Line separator
+
+    // Cart Items
+    y += 10;
+    const cartTable = document.getElementById('selected-products');
+    const rows = cartTable.querySelectorAll('tr');
+    const cartData = [];
+    rows.forEach(row => {
+      const name = row.children[1].textContent;
+      const price = row.children[2].textContent;
+      const quantity = row.querySelector('.quantity').value;
+      const total = row.children[4].textContent;
+
+      cartData.push({ name, price, quantity, total });
+
+      doc.text(name, 10, y);
+      doc.text(price, 80, y);
+      doc.text(quantity, 120, y);
+      doc.text(total, 160, y);
+
+      y += 10;
+
+      if (y > 270) { // Check if page height is exceeded
+        doc.addPage();
+        y = 10;
+      }
+    });
+
+    // Total Price
+    const totalPrice = document.getElementById('total-price').textContent;
+    doc.line(10, y, 200, y); // Line above total price
+    y += 10;
+    doc.setFontSize(12);
+    doc.text(`Total Price: ${totalPrice}`, 10, y);
+
+    // Payment Details
+    const paymentMethod = document.getElementById('payment-method').value;
+    y += 10;
+    doc.text(`Payment Method: ${paymentMethod}`, 10, y);
+
+    if (paymentMethod === 'cash') {
+      const cashReceived = document.getElementById('cash-received').value;
+      const changeAmount = document.getElementById('change-amount').textContent;
+      y += 10;
+      doc.text(`Cash Received: ${cashReceived}`, 10, y);
+      y += 10;
+      doc.text(`Change: ${changeAmount}`, 10, y);
+    }
+
+    // Footer
+    y += 20;
+    doc.line(10, y, 200, y); // Footer line separator
+    y += 10;
+    doc.setFontSize(10);
+    doc.text('Thank you for your purchase!', 105, y, { align: 'center' });
+
+    // Save the PDF
+    doc.save('invoice.pdf');
   });
 </script>
 <!-- Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 </body>
 </html>

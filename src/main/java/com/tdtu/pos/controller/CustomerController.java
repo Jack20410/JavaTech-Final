@@ -3,21 +3,51 @@ package com.tdtu.pos.controller;
 import com.tdtu.pos.entity.Customer;
 import com.tdtu.pos.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/api/customers")
+@Controller // Ensures view rendering
+@RequestMapping("/salesperson") // Base path for salesperson views
 public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
 
-    @GetMapping("/{phone}")
-    public ResponseEntity<Customer> getCustomer(@PathVariable String phone) {
-        return ResponseEntity.ok(customerService.getCustomerByPhone(phone));
+    // View all customers
+    @GetMapping("/view-customers")
+    public String viewCustomers(Model model) {
+        model.addAttribute("customers", customerService.getAllCustomers());
+        model.addAttribute("newCustomer", new Customer());
+        return "salesperson/view-customers";
+    }
+
+    // Add a new customer
+    @PostMapping("/save-customer")
+    public String saveCustomer(@ModelAttribute("newCustomer") Customer customer) {
+        customer.setActive(true); // Set active by default
+        customerService.saveCustomer(customer);
+        return "redirect:/salesperson/view-customers";
+    }
+
+    // Edit an existing customer
+    @PostMapping("/update-customer")
+    public String updateCustomer(@ModelAttribute("customer") Customer updatedCustomer) {
+        customerService.updateCustomer(updatedCustomer);
+        return "redirect:/salesperson/view-customers";
+    }
+
+    // Delete a customer by ID
+    @GetMapping("/delete-customer/{id}")
+    public String deleteCustomer(@PathVariable("id") int id) {
+        customerService.deleteCustomer(id);
+        return "redirect:/salesperson/view-customers";
+    }
+
+    // Toggle active status
+    @PostMapping("/toggle-customer-status/{id}")
+    public String toggleCustomerStatus(@PathVariable("id") int id) {
+        customerService.toggleActiveStatus(id);
+        return "redirect:/salesperson/view-customers";
     }
 }

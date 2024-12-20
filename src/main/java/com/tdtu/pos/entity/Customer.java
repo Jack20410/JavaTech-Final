@@ -12,6 +12,8 @@ public class Customer {
     private String fullName;
     @Column(length = 10, nullable = false)
     private String phoneNumber;
+    @Column(nullable = false)
+    private Boolean active;
     private String address;
     private String avatar;
 
@@ -47,6 +49,10 @@ public class Customer {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    public Boolean getActive() {return active;}
+
+    public void setActive(Boolean active) {this.active = active;}
 
     public String getAvatar() {
         return avatar;

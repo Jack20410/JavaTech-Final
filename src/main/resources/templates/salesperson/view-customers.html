@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Management</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+<body>
+<div class="container mt-4">
+  <h1>Customer Management</h1>
+  <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addCustomerModal">Add New Customer</button>
+
+  <table class="table table-bordered">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Phone</th>
+      <th>Address</th>
+      <th>Active</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="customer : ${customers}">
+      <td th:text="${customer.id}"></td>
+      <td th:text="${customer.fullName}"></td>
+      <td th:text="${customer.phoneNumber}"></td>
+      <td th:text="${customer.address}"></td>
+      <td>
+        <label class="switch">
+          <input type="checkbox" class="toggle-status"
+                 th:checked="${customer.active}"
+                 th:attr="data-id=${customer.id}">
+          <span class="slider round"></span>
+        </label>
+      </td>
+      <td>
+        <button class="btn btn-primary btn-sm" data-toggle="modal"
+                data-target="#editCustomerModal"
+                th:attr="data-id=${customer.id}, data-fullName=${customer.fullName}, data-phoneNumber=${customer.phoneNumber}, data-address=${customer.address}, data-active=${customer.active}">
+          Edit
+        </button>
+        <button class="btn btn-danger btn-sm delete-customer" th:attr="data-id=${customer.id}">Delete</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Add Customer Modal -->
+<div class="modal fade" id="addCustomerModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="addCustomerForm">
+        <div class="modal-header">
+          <h5 class="modal-title">Add New Customer</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" class="form-control" id="addFullName" required>
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="text" class="form-control" id="addPhoneNumber" required>
+          </div>
+          <div class="form-group">
+            <label>Address</label>
+            <input type="text" class="form-control" id="addAddress" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Customer Modal -->
+<div class="modal fade" id="editCustomerModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="editCustomerForm">
+        <input type="hidden" id="editId">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Customer</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" class="form-control" id="editFullName" required>
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="text" class="form-control" id="editPhoneNumber" required>
+          </div>
+          <div class="form-group">
+            <label>Address</label>
+            <input type="text" class="form-control" id="editAddress" required>
+          </div>
+          <div class="form-group">
+            <label>Active</label>
+            <label class="switch">
+              <input type="checkbox" id="editActive">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    const csrfToken = $("meta[name='_csrf']").attr("content");
+    const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+    $.ajaxSetup({
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader(csrfHeader, csrfToken);
+      }
+    });
+
+    // Save New Customer
+    $('#addCustomerForm').submit(function (e) {
+      e.preventDefault();
+      $.ajax({
+        url: '/salesperson/save-customer',
+        method: 'POST',
+        data: {
+          fullName: $('#addFullName').val(),
+          phoneNumber: $('#addPhoneNumber').val(),
+          address: $('#addAddress').val()
+        },
+        success: function () {
+          alert("Customer added successfully!");
+          location.reload();
+        },
+        error: function () {
+          alert("Failed to add customer.");
+        }
+      });
+    });
+
+    // Update Customer
+    $('#editCustomerForm').submit(function (e) {
+      e.preventDefault();
+      $.ajax({
+        url: '/salesperson/update-customer',
+        method: 'POST',
+        data: {
+          id: $('#editId').val(),
+          fullName: $('#editFullName').val(),
+          phoneNumber: $('#editPhoneNumber').val(),
+          address: $('#editAddress').val(),
+          active: $('#editActive').is(':checked')
+        },
+        success: function () {
+          alert("Customer updated successfully!");
+          location.reload();
+        },
+        error: function () {
+          alert("Failed to update customer.");
+        }
+      });
+    });
+
+    // Delete Customer
+    $('.delete-customer').click(function () {
+      const id = $(this).data('id');
+      if (confirm("Are you sure you want to delete this customer?")) {
+        $.ajax({
+          url: `/salesperson/delete-customer/${id}`,
+          method: 'GET',
+          success: function () {
+            alert("Customer deleted!");
+            location.reload();
+          },
+          error: function () {
+            alert("Failed to delete customer.");
+          }
+        });
+      }
+    });
+
+    // Prefill Edit Modal
+    $('#editCustomerModal').on('show.bs.modal', function (event) {
+      const button = $(event.relatedTarget);
+      $('#editId').val(button.data('id'));
+      $('#editFullName').val(button.data('fullname'));
+      $('#editPhoneNumber').val(button.data('phonenumber'));
+      $('#editAddress').val(button.data('address'));
+      $('#editActive').prop('checked', button.data('active') === 'true');
+    });
+  });
+</script>
+
+</body>
+</html>

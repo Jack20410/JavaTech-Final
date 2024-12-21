@@ -25,6 +25,16 @@
             text-align: center;
             padding: 1rem 0;
         }
+        .card{
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .card-body p{
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -63,7 +73,7 @@
                     <div class="card text-white bg-primary mb-3">
                         <div class="card-body">
                             <h5 class="card-title">Total Sales</h5>
-                            <p class="card-text">$25,000 Chưa sửa</p>
+                            <p th:text="${totalSales != null ? totalSales : 0}">0</p>
                         </div>
                     </div>
                 </div>
@@ -87,7 +97,7 @@
                     <div class="card text-white bg-info mb-3">
                         <div class="card-body">
                             <h5 class="card-title">Customers</h5>
-                            <p class="card-text">85 chưa sửa </p>
+                            <p class="card-text" th:text="${customerCount}">0</p>
                         </div>
                     </div>
                 </div>

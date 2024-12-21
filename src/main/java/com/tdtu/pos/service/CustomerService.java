@@ -31,6 +31,7 @@ public class CustomerService {
                 });
     }
 
+<<<<<<< Updated upstream
     // Update an existing customer
     public void updateCustomer(Customer updatedCustomer) {
         Customer existingCustomer = customerRepository.findById(updatedCustomer.getId())
@@ -39,6 +40,26 @@ public class CustomerService {
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
         customerRepository.save(existingCustomer);
     }
+=======
+    public long getCustomerCount() {
+        return customerRepository.count();
+    }
+
+//    // Update an existing customer
+//    public void updateCustomer(Customer updatedCustomer) {
+//        Customer existingCustomer = customerRepository.findById(updatedCustomer.getId())
+//                .orElseThrow(() -> new RuntimeException("Customer not found!"));
+//        existingCustomer.setFullName(updatedCustomer.getFullName());
+//        existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
+//        customerRepository.save(existingCustomer);
+//    }
+//
+//    // Delete a customer by ID
+//    public void deleteCustomer(int id) {
+//        customerRepository.deleteById(id);
+//    }
+
+>>>>>>> Stashed changes
 
     // Delete a customer by ID
     public void deleteCustomer(Integer id) {

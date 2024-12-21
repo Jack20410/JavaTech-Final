@@ -4,7 +4,10 @@ import com.tdtu.pos.DTO.InvoiceDTO;
 import com.tdtu.pos.DTO.InvoiceItemDTO;
 import com.tdtu.pos.DTO.PurchaseRequest;
 import com.tdtu.pos.entity.*;
+<<<<<<< Updated upstream
 import com.tdtu.pos.repository.CustomerRepository;
+=======
+>>>>>>> Stashed changes
 import com.tdtu.pos.repository.InvoiceRepository;
 import com.tdtu.pos.repository.ProductRepository;
 import com.tdtu.pos.repository.UserRepository;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +51,8 @@ public class MainController {
 
     @Autowired
     private InvoiceService invoiceService;
+    @Autowired
+    private InvoiceRepository invoiceRepository;
 
 
     // Root path redirects to the login page
@@ -69,10 +75,18 @@ public class MainController {
         // Fetch total employees with ROLE_SALESPERSON
         long employeeCount = userRepository.countByRole(User.Role.ROLE_SALESPERSON);
 
+        //Fetch total customers
+        long customerCount = customerService.getCustomerCount();
+
+        //Fetch total sales
+        BigDecimal totalSales = invoiceService.getTotalSales();
+
         // Pass user data to the view
         model.addAttribute("user", user);
         model.addAttribute("productCount", productCount);
         model.addAttribute("employeeCount", employeeCount);
+        model.addAttribute("customerCount", customerCount);
+        model.addAttribute("totalSales", totalSales != null ? totalSales : BigDecimal.ZERO);
 
         return "manager/index"; // Thymeleaf template name
     }

@@ -47,5 +47,9 @@ public class InvoiceService {
     public List<Invoice> getInvoicesByCustomer(Customer customer) {
         return invoiceRepository.findByCustomer(customer);
     }
+    //Method to get total sales
+    public BigDecimal getTotalSales() {
+        return invoiceRepository.findTotalSales();
+    }
 }
 

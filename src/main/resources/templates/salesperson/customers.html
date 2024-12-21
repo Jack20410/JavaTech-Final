@@ -38,7 +38,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item"><a class="nav-link" href="/salesperson/sales">Process Sales</a></li>
-        <li class="nav-item"><a class="nav-link" href="/customers">Customers</a></li>
+        <li class="nav-item"><a class="nav-link" href="/salesperson/customers">Customers</a></li>
         <li class="nav-item"><a class="nav-link" href="/reports">My Reports</a></li>
       </ul>
     </div>
@@ -61,8 +61,9 @@
           <td th:text="${customer.id}"></td>
           <td th:text="${customer.name}"></td>
           <td th:text="${customer.phoneNumber}"></td>
-          <td th:text="${customer.createdDate}"></td>
+          <td th:text="${#dates.format(customer.createdDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
           <td>
+            <a th:href="@{'/customers/history/' + ${customer.id}}" class="btn btn-info">View History</a>
             <button class="btn btn-primary btn-sm" data-toggle="modal"
                     data-target="#editCustomerModal"
                     th:attr="data-id=${customer.id}, data-fullName=${customer.name}, data-phoneNumber=${customer.phoneNumber}">

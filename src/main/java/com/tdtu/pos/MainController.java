@@ -1,7 +1,11 @@
 package com.tdtu.pos;
 
+import com.tdtu.pos.DTO.InvoiceDTO;
+import com.tdtu.pos.DTO.InvoiceItemDTO;
 import com.tdtu.pos.DTO.PurchaseRequest;
 import com.tdtu.pos.entity.*;
+import com.tdtu.pos.repository.CustomerRepository;
+import com.tdtu.pos.repository.InvoiceRepository;
 import com.tdtu.pos.repository.ProductRepository;
 import com.tdtu.pos.repository.UserRepository;
 import com.tdtu.pos.service.CustomerService;
@@ -31,6 +35,12 @@ public class MainController {
     private UserRepository userRepository;
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private InvoiceRepository invoiceRepository;
 
     @Autowired
     private CustomerService customerService;
@@ -126,6 +136,50 @@ public class MainController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete customer");
         }
     }
+
+    @GetMapping("/customers/history/{customerId}")
+    public String viewCustomerHistory(@PathVariable Integer customerId, Model model) {
+        // Fetch the customer by ID
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found!"));
+
+        // Fetch the invoices related to the customer
+        List<Invoice> invoices = invoiceRepository.findByCustomer(customer);
+
+        // Pass the customer and invoices to the model
+        model.addAttribute("customer", customer);
+        model.addAttribute("invoices", invoices);
+
+        // Return the view template for displaying history
+        return "salesperson/history";
+    }
+
+    @GetMapping("/invoice/details/{invoiceId}")
+    @ResponseBody
+    public ResponseEntity<InvoiceDTO> getInvoiceDetails(@PathVariable Integer invoiceId) {
+        Invoice invoice = invoiceRepository.findById(invoiceId)
+                .orElseThrow(() -> new RuntimeException("Invoice not found!"));
+
+        // Map entity to DTO
+        InvoiceDTO dto = new InvoiceDTO();
+        dto.setId(invoice.getId());
+        dto.setCustomerName(invoice.getCustomer().getName());
+        dto.setPhoneNumber(invoice.getCustomer().getPhoneNumber());
+        dto.setTotalPrice(invoice.getTotalPrice());
+        dto.setPaymentMethod(invoice.getPaymentMethod());
+        dto.setCreatedDate(invoice.getCreatedDate());
+        dto.setItems(invoice.getItems().stream().map(item -> {
+            InvoiceItemDTO itemDTO = new InvoiceItemDTO();
+            itemDTO.setProductName(item.getProduct().getName());
+            itemDTO.setQuantity(item.getQuantity());
+            itemDTO.setPrice(item.getPrice());
+            itemDTO.setTotal(item.getTotal());
+            return itemDTO;
+        }).collect(Collectors.toList()));
+
+        return ResponseEntity.ok(dto);
+    }
+
 
     @GetMapping("/sales")
     public String processSales() {

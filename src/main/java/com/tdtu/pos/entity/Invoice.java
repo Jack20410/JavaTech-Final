@@ -1,5 +1,6 @@
 package com.tdtu.pos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -35,6 +36,7 @@ public class Invoice {
     private Date createdDate = new Date();
 
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<InvoiceItem> items = new ArrayList<>();
 
     public Invoice() {

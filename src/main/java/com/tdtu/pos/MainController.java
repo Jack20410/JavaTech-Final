@@ -4,10 +4,7 @@ import com.tdtu.pos.DTO.InvoiceDTO;
 import com.tdtu.pos.DTO.InvoiceItemDTO;
 import com.tdtu.pos.DTO.PurchaseRequest;
 import com.tdtu.pos.entity.*;
-<<<<<<< Updated upstream
 import com.tdtu.pos.repository.CustomerRepository;
-=======
->>>>>>> Stashed changes
 import com.tdtu.pos.repository.InvoiceRepository;
 import com.tdtu.pos.repository.ProductRepository;
 import com.tdtu.pos.repository.UserRepository;
@@ -51,9 +48,6 @@ public class MainController {
 
     @Autowired
     private InvoiceService invoiceService;
-    @Autowired
-    private InvoiceRepository invoiceRepository;
-
 
     // Root path redirects to the login page
     @GetMapping("")

@@ -31,7 +31,6 @@ public class CustomerService {
                 });
     }
 
-<<<<<<< Updated upstream
     // Update an existing customer
     public void updateCustomer(Customer updatedCustomer) {
         Customer existingCustomer = customerRepository.findById(updatedCustomer.getId())
@@ -40,7 +39,6 @@ public class CustomerService {
         existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
         customerRepository.save(existingCustomer);
     }
-=======
     public long getCustomerCount() {
         return customerRepository.count();
     }
@@ -59,7 +57,6 @@ public class CustomerService {
 //        customerRepository.deleteById(id);
 //    }
 
->>>>>>> Stashed changes
 
     // Delete a customer by ID
     public void deleteCustomer(Integer id) {

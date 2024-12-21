@@ -67,6 +67,23 @@ public class MainController {
         return "manager/index"; // Thymeleaf template name
     }
 
+    @GetMapping("/manager/employees")
+    public String manageEmployees(Model model) {
+        // Fetch all users with ROLE_SALESPERSON
+        List<User> salespersons = userRepository.findByRole(User.Role.ROLE_SALESPERSON);
+        model.addAttribute("salespersons", salespersons);
+        model.addAttribute("userForm", new User());
+        return "manager/employees"; // Return the Thymeleaf template
+    }
+
+    @PostMapping("/manager/employees")
+    public String addEmployee(@ModelAttribute("userForm") User user, Model model) {
+        user.setRole(User.Role.ROLE_SALESPERSON); // Ensure the correct role
+        user.setActive(true); // Default to active status
+        userRepository.save(user); // Save user to the database
+        return "redirect:/manager/employees"; // Redirect to the employees listing
+    }
+
     //Salesperson dashboard route
     @GetMapping("/salesperson/index")
     public String salespersonDashboard(Model model, @AuthenticationPrincipal UserDetails currentUser) {
@@ -79,6 +96,35 @@ public class MainController {
         model.addAttribute("user", user);
 
         return "salesperson/index"; // Thymeleaf template name
+    }
+
+    @GetMapping("/salesperson/customers")
+    public String listCustomers(Model model) {
+        List<Customer> customers = customerService.getAllCustomers();
+        model.addAttribute("customers", customers);
+        return "salesperson/customers"; // Render the Thymeleaf template
+    }
+
+    @PostMapping("/salesperson/update-customer")
+    @ResponseBody
+    public ResponseEntity<?> updateCustomer(@RequestBody Customer customer) {
+        try {
+            customerService.updateCustomer(customer);
+            return ResponseEntity.ok("Customer updated successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update customer");
+        }
+    }
+
+    @GetMapping("/salesperson/delete-customer/{id}")
+    @ResponseBody
+    public ResponseEntity<?> deleteCustomer(@PathVariable Integer id) {
+        try {
+            customerService.deleteCustomer(id);
+            return ResponseEntity.ok("Customer deleted successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete customer");
+        }
     }
 
     @GetMapping("/sales")
@@ -101,23 +147,6 @@ public class MainController {
         // Add to model
         model.addAttribute("productsByCategory", productsByCategory);
         return "salesperson/sales"; // Path to salesperson's sales page
-    }
-
-    @GetMapping("/manager/employees")
-    public String manageEmployees(Model model) {
-        // Fetch all users with ROLE_SALESPERSON
-        List<User> salespersons = userRepository.findByRole(User.Role.ROLE_SALESPERSON);
-        model.addAttribute("salespersons", salespersons);
-        model.addAttribute("userForm", new User());
-        return "manager/employees"; // Return the Thymeleaf template
-    }
-
-    @PostMapping("/manager/employees")
-    public String addEmployee(@ModelAttribute("userForm") User user, Model model) {
-        user.setRole(User.Role.ROLE_SALESPERSON); // Ensure the correct role
-        user.setActive(true); // Default to active status
-        userRepository.save(user); // Save user to the database
-        return "redirect:/manager/employees"; // Redirect to the employees listing
     }
 
     @PostMapping("/manager/employees/edit")

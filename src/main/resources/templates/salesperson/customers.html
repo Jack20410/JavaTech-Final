@@ -52,29 +52,20 @@
           <th>ID</th>
           <th>Name</th>
           <th>Phone</th>
-          <th>Address</th>
-          <th>Active</th>
+          <th>Date Create</th>
           <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="customer : ${customers}">
           <td th:text="${customer.id}"></td>
-          <td th:text="${customer.fullName}"></td>
+          <td th:text="${customer.name}"></td>
           <td th:text="${customer.phoneNumber}"></td>
-          <td th:text="${customer.address}"></td>
-          <td>
-            <label class="switch">
-              <input type="checkbox" class="toggle-status"
-                     th:checked="${customer.active}"
-                     th:attr="data-id=${customer.id}">
-              <span class="slider round"></span>
-            </label>
-          </td>
+          <td th:text="${customer.createdDate}"></td>
           <td>
             <button class="btn btn-primary btn-sm" data-toggle="modal"
                     data-target="#editCustomerModal"
-                    th:attr="data-id=${customer.id}, data-fullName=${customer.fullName}, data-phoneNumber=${customer.phoneNumber}, data-address=${customer.address}, data-active=${customer.active}">
+                    th:attr="data-id=${customer.id}, data-fullName=${customer.name}, data-phoneNumber=${customer.phoneNumber}">
               Edit
             </button>
             <button class="btn btn-danger btn-sm delete-customer" th:attr="data-id=${customer.id}">Delete</button>
@@ -84,6 +75,7 @@
       </table>
     </div>
   </div>
+  <!-- Edit Customer Modal -->
   <!-- Edit Customer Modal -->
   <div class="modal fade" id="editCustomerModal" tabindex="-1">
     <div class="modal-dialog">
@@ -103,17 +95,6 @@
               <label>Phone Number</label>
               <input type="text" class="form-control" id="editPhoneNumber" required>
             </div>
-            <div class="form-group">
-              <label>Address</label>
-              <input type="text" class="form-control" id="editAddress" required>
-            </div>
-            <div class="form-group">
-              <label>Active</label>
-              <label class="switch">
-                <input type="checkbox" id="editActive">
-                <span class="slider round"></span>
-              </label>
-            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -127,6 +108,7 @@
     &copy;TDTU 2024 POS System. All Rights Reserved.
   </footer>
 </div>
+
 <script>
   $(document).ready(function () {
     const csrfToken = $("meta[name='_csrf']").attr("content");
@@ -138,40 +120,20 @@
       }
     });
 
-    // Save New Customer
-    $('#addCustomerForm').submit(function (e) {
-      e.preventDefault();
-      $.ajax({
-        url: '/salesperson/save-customer',
-        method: 'POST',
-        data: {
-          fullName: $('#addFullName').val(),
-          phoneNumber: $('#addPhoneNumber').val(),
-          address: $('#addAddress').val()
-        },
-        success: function () {
-          alert("Customer added successfully!");
-          location.reload();
-        },
-        error: function () {
-          alert("Failed to add customer.");
-        }
-      });
-    });
-
     // Update Customer
     $('#editCustomerForm').submit(function (e) {
       e.preventDefault();
       $.ajax({
         url: '/salesperson/update-customer',
         method: 'POST',
-        data: {
+        contentType: 'application/json',
+        data: JSON.stringify({
           id: $('#editId').val(),
           fullName: $('#editFullName').val(),
           phoneNumber: $('#editPhoneNumber').val(),
           address: $('#editAddress').val(),
           active: $('#editActive').is(':checked')
-        },
+        }),
         success: function () {
           alert("Customer updated successfully!");
           location.reload();
@@ -204,10 +166,8 @@
     $('#editCustomerModal').on('show.bs.modal', function (event) {
       const button = $(event.relatedTarget);
       $('#editId').val(button.data('id'));
-      $('#editFullName').val(button.data('fullname'));
+      $('#editFullName').val(button.data('name'));
       $('#editPhoneNumber').val(button.data('phonenumber'));
-      $('#editAddress').val(button.data('address'));
-      $('#editActive').prop('checked', button.data('active') === 'true');
     });
   });
 </script>

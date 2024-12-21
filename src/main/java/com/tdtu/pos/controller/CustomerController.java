@@ -19,7 +19,7 @@ public class CustomerController {
     public String viewCustomers(Model model) {
         model.addAttribute("customers", customerService.getAllCustomers());
         model.addAttribute("newCustomer", new Customer());
-        return "salesperson/view-customers";
+        return "customers";
     }
 
     // Add a new customer

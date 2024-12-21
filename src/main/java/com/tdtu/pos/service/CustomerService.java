@@ -17,11 +17,6 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    // Save a new customer
-//    public void saveCustomer(Customer customer) {
-//        customerRepository.save(customer);
-//    }
-
     public Customer saveCustomer(String name, String phoneNumber) {
         if (phoneNumber == null || phoneNumber.isBlank()) {
             throw new IllegalArgumentException("Phone number cannot be null or empty");
@@ -36,19 +31,17 @@ public class CustomerService {
                 });
     }
 
-//    // Update an existing customer
-//    public void updateCustomer(Customer updatedCustomer) {
-//        Customer existingCustomer = customerRepository.findById(updatedCustomer.getId())
-//                .orElseThrow(() -> new RuntimeException("Customer not found!"));
-//        existingCustomer.setFullName(updatedCustomer.getFullName());
-//        existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
-//        customerRepository.save(existingCustomer);
-//    }
-//
-//    // Delete a customer by ID
-//    public void deleteCustomer(int id) {
-//        customerRepository.deleteById(id);
-//    }
+    // Update an existing customer
+    public void updateCustomer(Customer updatedCustomer) {
+        Customer existingCustomer = customerRepository.findById(updatedCustomer.getId())
+                .orElseThrow(() -> new RuntimeException("Customer not found!"));
+        existingCustomer.setName(updatedCustomer.getName());
+        existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
+        customerRepository.save(existingCustomer);
+    }
 
-
+    // Delete a customer by ID
+    public void deleteCustomer(Integer id) {
+        customerRepository.deleteById(id);
+    }
 }

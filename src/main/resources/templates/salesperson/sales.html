@@ -32,6 +32,8 @@
   </style>
 </head>
 <body>
+<!-- Hidden CSRF Token -->
+<input type="hidden" id="csrf-token" th:value="${_csrf.token}">
 <!-- Navigation Bar -->
 <div class="wrapper">
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -132,6 +134,7 @@
              </button>
            </div>
            <div class="modal-body">
+
              <!-- Customer Form -->
              <form id="purchase-form">
                <div class="form-group">
@@ -140,14 +143,14 @@
                </div>
                <div class="form-group">
                  <label for="customer-phone">Phone Number</label>
-                 <input type="text" id="customer-phone" class="form-control" placeholder="Enter phone number" required>
+                 <input maxlength="10" type="text" id="customer-phone" class="form-control" placeholder="Enter phone number" required>
                </div>
                <!-- Payment Method -->
                <div class="form-group">
                  <label for="payment-method">Payment Method</label>
                  <select id="payment-method" class="form-control" required>
-                   <option value="cash">Cash</option>
                    <option value="qr">Scan QR Code</option>
+                   <option value="cash">Cash</option>
                  </select>
                </div>
                <!-- Cash Payment Fields -->
@@ -278,14 +281,86 @@
     const { jsPDF } = window.jspdf; // Access jsPDF from the global object
     const doc = new jsPDF();
 
+    // Get Customer Details
     const customerName = document.getElementById('customer-name').value;
     const customerPhone = document.getElementById('customer-phone').value;
 
+    // Validate Customer Input
     if (!customerName || !customerPhone) {
       alert('Please fill in customer details');
       return;
     }
 
+    // Prepare Cart Items
+    const cartTable = document.getElementById('selected-products');
+    const rows = cartTable.querySelectorAll('tr');
+    const items = [];
+    let totalPrice = 0;
+
+    rows.forEach(row => {
+      const name = row.children[1].textContent;
+      const price = parseFloat(row.children[2].textContent.replace(/,/g, ''));
+      const quantity = parseInt(row.querySelector('.quantity').value);
+      const total = parseFloat(row.children[4].textContent.replace(/,/g, ''));
+
+      // Add item to the cart
+      items.push({
+        productName: name,
+        price: price,
+        quantity: quantity,
+        total: total
+      });
+
+      totalPrice += total;
+    });
+
+    // Prepare Payment Details
+    const paymentMethod = document.getElementById('payment-method').value;
+    const cashReceived = paymentMethod === 'cash' ? parseFloat(document.getElementById('cash-received').value || '0') : null;
+    const changeGiven = paymentMethod === 'cash' ? parseFloat(document.getElementById('change-amount').textContent || '0') : null;
+
+    // Save Purchase Data to Backend
+    savePurchaseData(customerName, customerPhone, totalPrice, paymentMethod, cashReceived, changeGiven, items);
+
+    // Generate PDF Invoice
+    generateInvoicePDF(doc, customerName, customerPhone, items, totalPrice, paymentMethod, cashReceived, changeGiven);
+
+    // Close the modal and reload the page
+    $('#purchase-modal').modal('hide');
+    setTimeout(() => {
+      location.reload();
+    }, 500);
+  });
+
+  // Function to Save Purchase Data to Backend
+  function savePurchaseData(customerName, customerPhone, totalPrice, paymentMethod, cashReceived, changeGiven, items) {
+    const purchaseData = {
+      customerName: document.getElementById('customer-name').value,
+      customerPhone: document.getElementById('customer-phone').value,
+      totalPrice: parseFloat(document.getElementById('total-price').textContent.replace(/,/g, '')),
+      paymentMethod: document.getElementById('payment-method').value,
+      cashReceived: parseFloat(document.getElementById('cash-received').value || '0'),
+      changeGiven: parseFloat(document.getElementById('change-amount').textContent || '0'),
+      items: selectedProducts.map(product => ({
+        productId: product.id,
+        quantity: product.quantity,
+        price: product.price,
+        total: product.quantity * product.price
+      }))
+    };
+
+    fetch('/sales/purchase', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.getElementById('csrf-token').value
+      },
+      body: JSON.stringify(purchaseData)
+    })
+  }
+
+  // Function to Generate PDF Invoice
+  function generateInvoicePDF(doc, customerName, customerPhone, items, totalPrice, paymentMethod, cashReceived, changeGiven) {
     // Invoice Header
     doc.setFontSize(18);
     doc.text('INVOICE', 105, 15, { align: 'center' });
@@ -293,80 +368,64 @@
 
     // Customer Information
     doc.text('Customer Information', 10, 25);
-    doc.line(10, 27, 200, 27); // Line separator
+    doc.line(10, 27, 200, 27);
     doc.text(`Name: ${customerName}`, 10, 35);
     doc.text(`Phone: ${customerPhone}`, 10, 42);
 
     // Product Table Header
     let y = 50;
     doc.text('Products', 10, y);
-    doc.line(10, y + 2, 200, y + 2); // Line separator
-
+    doc.line(10, y + 2, 200, y + 2);
     y += 10;
     doc.setFontSize(10);
     doc.text('Name', 10, y);
     doc.text('Price', 80, y);
     doc.text('Quantity', 120, y);
     doc.text('Total', 160, y);
-    doc.line(10, y + 2, 200, y + 2); // Line separator
+    doc.line(10, y + 2, 200, y + 2);
 
-    // Cart Items
+    // Product Details
     y += 10;
-    const cartTable = document.getElementById('selected-products');
-    const rows = cartTable.querySelectorAll('tr');
-    const cartData = [];
-    rows.forEach(row => {
-      const name = row.children[1].textContent;
-      const price = row.children[2].textContent;
-      const quantity = row.querySelector('.quantity').value;
-      const total = row.children[4].textContent;
-
-      cartData.push({ name, price, quantity, total });
-
-      doc.text(name, 10, y);
-      doc.text(price, 80, y);
-      doc.text(quantity, 120, y);
-      doc.text(total, 160, y);
-
+    items.forEach(item => {
+      doc.text(item.productName, 10, y);
+      doc.text(item.price.toFixed(2), 80, y);
+      doc.text(item.quantity.toString(), 120, y);
+      doc.text(item.total.toFixed(2), 160, y);
       y += 10;
 
-      if (y > 270) { // Check if page height is exceeded
+      if (y > 270) { // Check for page overflow
         doc.addPage();
         y = 10;
       }
     });
 
     // Total Price
-    const totalPrice = document.getElementById('total-price').textContent;
-    doc.line(10, y, 200, y); // Line above total price
+    doc.line(10, y, 200, y);
     y += 10;
     doc.setFontSize(12);
-    doc.text(`Total Price: ${totalPrice}`, 10, y);
+    doc.text(`Total Price: ${totalPrice.toFixed(2)}`, 10, y);
 
     // Payment Details
-    const paymentMethod = document.getElementById('payment-method').value;
     y += 10;
     doc.text(`Payment Method: ${paymentMethod}`, 10, y);
 
     if (paymentMethod === 'cash') {
-      const cashReceived = document.getElementById('cash-received').value;
-      const changeAmount = document.getElementById('change-amount').textContent;
       y += 10;
-      doc.text(`Cash Received: ${cashReceived}`, 10, y);
+      doc.text(`Cash Received: ${cashReceived.toFixed(2)}`, 10, y);
       y += 10;
-      doc.text(`Change: ${changeAmount}`, 10, y);
+      doc.text(`Change: ${changeGiven.toFixed(2)}`, 10, y);
     }
 
     // Footer
     y += 20;
-    doc.line(10, y, 200, y); // Footer line separator
+    doc.line(10, y, 200, y);
     y += 10;
     doc.setFontSize(10);
     doc.text('Thank you for your purchase!', 105, y, { align: 'center' });
 
     // Save the PDF
     doc.save('invoice.pdf');
-  });
+  }
 </script>
 <!-- Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

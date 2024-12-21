@@ -1,37 +1,54 @@
 package com.tdtu.pos.entity;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-@Entity@Table(name = "customers")
+@Entity@Table(name = "customer")
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
-    @Column(nullable = false)
-    private String fullName;
-    @Column(length = 10, nullable = false)
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    @Column(name = "phone_number", nullable = false, length = 10, unique = true)
     private String phoneNumber;
-    @Column(nullable = false)
-    private Boolean active;
-    private String address;
-    private String avatar;
+    @Column(name = "created_date", nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate = new Date();
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Invoice> invoices = new ArrayList<>();
+
+    public Customer() {}
+
+    public Customer(Integer id, String name, String phoneNumber, Date createdDate, List<Invoice> invoices) {
+        this.id = id;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.createdDate = createdDate;
+        this.invoices = invoices;
+    }
 
     // Getters and Setters
-    public int getId() {
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getName() {
+        return name;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPhoneNumber() {
@@ -42,23 +59,19 @@ public class Customer {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getAddress() {
-        return address;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
-    public Boolean getActive() {return active;}
-
-    public void setActive(Boolean active) {this.active = active;}
-
-    public String getAvatar() {
-        return avatar;
+    public List<Invoice> getInvoices() {
+        return invoices;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    public void setInvoices(List<Invoice> invoices) {
+        this.invoices = invoices;
     }
 }

@@ -23,31 +23,24 @@ public class CustomerController {
     }
 
     // Add a new customer
-    @PostMapping("/save-customer")
-    public String saveCustomer(@ModelAttribute("newCustomer") Customer customer) {
-        customer.setActive(true); // Set active by default
-        customerService.saveCustomer(customer);
-        return "redirect:/salesperson/view-customers";
-    }
+//    @PostMapping("/save-customer")
+//    public String saveCustomer(@ModelAttribute("newCustomer") Customer customer) {
+//      customerService.saveCustomer(customer);
+//        return "redirect:/salesperson/view-customers";
+//    }
 
-    // Edit an existing customer
-    @PostMapping("/update-customer")
-    public String updateCustomer(@ModelAttribute("customer") Customer updatedCustomer) {
-        customerService.updateCustomer(updatedCustomer);
-        return "redirect:/salesperson/view-customers";
-    }
+//    // Edit an existing customer
+//    @PostMapping("/update-customer")
+//    public String updateCustomer(@ModelAttribute("customer") Customer updatedCustomer) {
+//        customerService.updateCustomer(updatedCustomer);
+//        return "redirect:/salesperson/view-customers";
+//    }
+//
+//    // Delete a customer by ID
+//    @GetMapping("/delete-customer/{id}")
+//    public String deleteCustomer(@PathVariable("id") int id) {
+//        customerService.deleteCustomer(id);
+//        return "redirect:/salesperson/view-customers";
+//    }
 
-    // Delete a customer by ID
-    @GetMapping("/delete-customer/{id}")
-    public String deleteCustomer(@PathVariable("id") int id) {
-        customerService.deleteCustomer(id);
-        return "redirect:/salesperson/view-customers";
-    }
-
-    // Toggle active status
-    @PostMapping("/toggle-customer-status/{id}")
-    public String toggleCustomerStatus(@PathVariable("id") int id) {
-        customerService.toggleActiveStatus(id);
-        return "redirect:/salesperson/view-customers";
-    }
 }

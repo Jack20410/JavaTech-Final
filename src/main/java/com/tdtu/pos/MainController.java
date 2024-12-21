@@ -1,30 +1,42 @@
 package com.tdtu.pos;
 
-import com.tdtu.pos.entity.Product;
-import com.tdtu.pos.entity.User;
+import com.tdtu.pos.DTO.PurchaseRequest;
+import com.tdtu.pos.entity.*;
 import com.tdtu.pos.repository.ProductRepository;
 import com.tdtu.pos.repository.UserRepository;
+import com.tdtu.pos.service.CustomerService;
+import com.tdtu.pos.service.InvoiceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class MainController {
 
+    private static final Logger log = LoggerFactory.getLogger(MainController.class);
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private CustomerService customerService;
+
+    @Autowired
+    private InvoiceService invoiceService;
 
 
     // Root path redirects to the login page
@@ -120,4 +132,30 @@ public class MainController {
         return "redirect:/manager/employees"; // Redirect to the employees listing
     }
 
+    @PreAuthorize("hasRole('SALESPERSON')")
+    @PostMapping("/sales/purchase")
+    @ResponseBody
+    public ResponseEntity<?> savePurchase(@RequestBody PurchaseRequest request) {
+        Customer customer = customerService.saveCustomer(request.getCustomerName(), request.getCustomerPhone());
+        List<InvoiceItem> items = request.getItems().stream().map(item -> {
+            InvoiceItem invoiceItem = new InvoiceItem();
+            invoiceItem.setProduct(new Product(Math.toIntExact(item.getProductId())));
+            invoiceItem.setQuantity(item.getQuantity());
+            invoiceItem.setPrice(item.getPrice());
+            invoiceItem.setTotal(item.getTotal());
+            return invoiceItem;
+        }).collect(Collectors.toList());
+
+        Invoice invoice = invoiceService.saveInvoice(
+                customer,
+                request.getTotalPrice(),
+                request.getPaymentMethod(),
+                request.getCashReceived(),
+                request.getChangeGiven(),
+                items
+        );
+
+        return ResponseEntity.ok(invoice);
+
+    }
 }

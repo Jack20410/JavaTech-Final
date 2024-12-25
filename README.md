@@ -1,4 +1,4 @@
-Create DataBase PointOfSaleDB
+Create DataBase pointofsaledb
 
 Run program to hibernate table in database
 

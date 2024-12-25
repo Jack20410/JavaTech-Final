@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" content="${_csrf.token}" />
     <title>Manager Dashboard</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
@@ -33,7 +34,9 @@
             align-items: center;
         }
         .card-body p{
-            margin: 0;
+            height: 100%; /* Ensure it takes up the available height */
+            text-align: center;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -41,9 +44,11 @@
 <div class="wrapper">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="manager/index">Manager Dashboard</a>
+
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item"><a class="nav-link" href="/manager/products">Products</a></li>
@@ -73,7 +78,7 @@
                     <div class="card text-white bg-primary mb-3">
                         <div class="card-body">
                             <h5 class="card-title">Total Sales</h5>
-                            <p th:text="${totalSales != null ? totalSales : 0}">0</p>
+                            <p th:text="${totalSales != null ? #numbers.formatInteger(totalSales, 3, 'COMMA') : '0'} + ' VND'">0</p>
                         </div>
                     </div>
                 </div>
@@ -121,6 +126,74 @@
         &copy;TDTU 2024 POS System. All Rights Reserved.
     </footer>
 </div>
+<!-- Profile Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profileModalLabel">Profile</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <img id="profileAvatar" src="#" alt="Avatar" class="rounded-circle mb-3" width="100">
+                </div>
+                <form id="profileForm" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="profileFullName" class="form-label">Full Name</label>
+                        <input type="text" id="profileFullName" class="form-control" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="profileEmail" class="form-label">Email</label>
+                        <input type="email" id="profileEmail" class="form-control" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="profileRole" class="form-label">Role</label>
+                        <input type="text" id="profileRole" class="form-control" disabled>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const profileModal = $('#profileModal');
+
+        // Show the modal when "Profile" button is clicked
+        document.querySelector('[href="/profile"]').addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Fetch user profile data
+            fetch('/api/user/profile', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Populate the modal fields
+                    document.getElementById('profileAvatar').src = `/${data.avatar}`;
+                    document.getElementById('profileFullName').value = data.fullName;
+                    document.getElementById('profileEmail').value = data.email;
+                    document.getElementById('profileRole').value = data.role;
+                    profileModal.modal('show');
+                })
+                .catch(error => {
+                    alert('Failed to load profile data.');
+                    console.error(error);
+                });
+        });
+    });
+
+</script>
 <!-- Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

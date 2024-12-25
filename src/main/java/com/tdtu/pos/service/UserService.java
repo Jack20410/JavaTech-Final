@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
@@ -30,15 +31,8 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    // Authenticate user by email and password
-    public boolean authenticate(String email, String rawPassword) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            // Check if the password matches and the user is active
-            return user.getActive() && passwordEncoder.matches(rawPassword, user.getPassword());
-        }
-        return false;
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     // Save a user (with hashed password)

@@ -37,9 +37,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(auth -> auth
+        http.authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/static/**").permitAll()
+                        .requestMatchers("/api/**").authenticated() // Protect API endpoints
                         .requestMatchers("/manager/**").hasRole("MANAGER")
                         .requestMatchers("/salesperson/**").hasRole("SALESPERSON")
                         .anyRequest().authenticated()

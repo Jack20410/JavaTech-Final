@@ -30,33 +30,36 @@
 <body>
 <!-- Navigation Bar -->
 <div class="wrapper">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="/salesperson/index">Salesperson Dashboard</a>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item"><a class="nav-link" href="/salesperson/sales">Process Sales</a></li>
-            <li class="nav-item"><a class="nav-link" href="/salesperson/customers">Customers</a></li>
-            <li class="nav-item"><a class="nav-link" href="/reports">My Reports</a></li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-                    <img th:src="@{'/'+${user.avatar}}" alt="Avatar" class="rounded-circle" width="30">
-                    <span th:text="${user.fullName}">Salesperson</span>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="/salesperson/index">Salesperson Dashboard</a>
 
-                </a>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="/profile">Profile</a>
-                    <form id="logout-form" method="post" action="/logout" style="display: none;">
-                        <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
-                    </form>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                    <a class="dropdown-item" href="#" onclick="document.getElementById('logout-form').submit();">
-                        Logout
-                    </a>
-                </div>
-            </li>
-        </ul>
-    </div>
-</nav>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a class="nav-link" href="/salesperson/sales">Process Sales</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/salesperson/customers">Customers</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/reports">My Reports</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+                            <img th:src="@{'/'+${user.avatar}}" alt="Avatar" class="rounded-circle" width="30">
+                            <span th:text="${user.fullName}">Salesperson</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="/profile">Profile</a>
+                            <form id="logout-form" method="post" action="/logout" style="display: none;">
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+                            </form>
+                            <a class="dropdown-item" href="#" onclick="document.getElementById('logout-form').submit();">
+                                Logout
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+    </nav>
 
     <div class="content">
     <!-- Dashboard Content -->
@@ -98,11 +101,78 @@
         </div>
     </div>
     </div>
-
 <footer class="bg-dark text-white text-center py-3 mt-4">
     &copy;TDTU 2024 POS System. All Rights Reserved.
 </footer>
+    <!-- Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel">Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <img id="profileAvatar" src="#" alt="Avatar" class="rounded-circle mb-3" width="100">
+                    </div>
+                    <form id="profileForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="profileFullName" class="form-label">Full Name</label>
+                            <input type="text" id="profileFullName" class="form-control" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="profileEmail" class="form-label">Email</label>
+                            <input type="email" id="profileEmail" class="form-control" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="profileRole" class="form-label">Role</label>
+                            <input type="text" id="profileRole" class="form-control" disabled>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const profileModal = $('#profileModal');
+
+        // Show the modal when "Profile" button is clicked
+        document.querySelector('[href="/profile"]').addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Fetch user profile data
+            fetch('/api/user/profile', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Populate the modal fields
+                    document.getElementById('profileAvatar').src = `/${data.avatar}`;
+                    document.getElementById('profileFullName').value = data.fullName;
+                    document.getElementById('profileEmail').value = data.email;
+                    document.getElementById('profileRole').value = data.role;
+                    profileModal.modal('show');
+                })
+                .catch(error => {
+                    alert('Failed to load profile data.');
+                    console.error(error);
+                });
+        });
+    });
+
+</script>
 <!-- Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

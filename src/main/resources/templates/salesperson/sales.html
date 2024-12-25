@@ -40,7 +40,7 @@
     <a class="navbar-brand" href="/salesperson/index">Salesperson Dashboard</a>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item"><a class="nav-link" href="/salesperson/sales">Process Sales</a></li>
+        <li class="nav-item active"><a class="nav-link" href="/salesperson/sales">Process Sales</a></li>
         <li class="nav-item"><a class="nav-link" href="/salesperson/customers">Customers</a></li>
         <li class="nav-item"><a class="nav-link" href="/reports">My Reports</a></li>
       </ul>
@@ -388,9 +388,9 @@
     y += 10;
     items.forEach(item => {
       doc.text(item.productName, 10, y);
-      doc.text(item.price.toFixed(2), 80, y);
+      doc.text(item.price.toFixed(0) + " vnd", 80, y);
       doc.text(item.quantity.toString(), 120, y);
-      doc.text(item.total.toFixed(2), 160, y);
+      doc.text(item.total.toFixed(0)+ " vnd", 160, y);
       y += 10;
 
       if (y > 270) { // Check for page overflow
@@ -403,7 +403,7 @@
     doc.line(10, y, 200, y);
     y += 10;
     doc.setFontSize(12);
-    doc.text(`Total Price: ${totalPrice.toFixed(2)}`, 10, y);
+    doc.text(`Total Price: ${formatPrice(totalPrice.toFixed(0))+ " vnd"}`, 10, y);
 
     // Payment Details
     y += 10;
@@ -411,9 +411,9 @@
 
     if (paymentMethod === 'cash') {
       y += 10;
-      doc.text(`Cash Received: ${cashReceived.toFixed(2)}`, 10, y);
+      doc.text(`Cash Received: ${formatPrice(cashReceived)+ " vnd"}`, 10, y);
       y += 10;
-      doc.text(`Change: ${changeGiven.toFixed(2)}`, 10, y);
+      doc.text(`Change: ${formatPrice(changeGiven+",000 vnd")}`, 10, y);
     }
 
     // Footer

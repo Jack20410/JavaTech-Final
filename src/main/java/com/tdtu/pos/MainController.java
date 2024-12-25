@@ -10,6 +10,7 @@ import com.tdtu.pos.repository.ProductRepository;
 import com.tdtu.pos.repository.UserRepository;
 import com.tdtu.pos.service.CustomerService;
 import com.tdtu.pos.service.InvoiceService;
+import com.tdtu.pos.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -34,6 +37,9 @@ public class MainController {
     private static final Logger log = LoggerFactory.getLogger(MainController.class);
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
     @Autowired
     private ProductRepository productRepository;
 
@@ -100,6 +106,25 @@ public class MainController {
         user.setActive(true); // Default to active status
         userRepository.save(user); // Save user to the database
         return "redirect:/manager/employees"; // Redirect to the employees listing
+    }
+
+    @GetMapping("/api/user/profile")
+    @ResponseBody
+    public ResponseEntity<?> getProfile(@AuthenticationPrincipal UserDetails currentUser) {
+        String email = currentUser.getUsername();
+        Optional<User> userOptional = userService.getUserByEmail(email);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Map<String, String> profileData = new HashMap<>();
+            profileData.put("fullName", user.getFullName());
+            profileData.put("email", user.getEmail());
+            profileData.put("role", user.getRole().name());
+            profileData.put("avatar", user.getAvatar());
+            return ResponseEntity.ok(profileData);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
     }
 
     //Salesperson dashboard route

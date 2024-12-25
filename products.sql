@@ -1,0 +1,28 @@
+Use pointofsaledb;
+
+INSERT INTO `products` (`id`, `barcode`, `category`, `created_date`, `image_path`, `is_available`, `name`, `retail_price`, `description`, `quantity`) VALUES
+(2, '', 'burgers', '2024-12-19 02:45:20.000000', 'images/food_images/burgers/beefcheese.png', b'1', 'Burger Beef and Cheese', 56000, '', 100),
+(3, '', 'burgers', '2024-12-19 02:45:45.000000', 'images/food_images/burgers/bigbeef.png', b'1', 'Burger Big Beef ', 79000, '', 10),
+(4, '', 'burgers', '2024-12-19 02:46:21.000000', 'images/food_images/burgers/bigmac.png', b'1', 'Burger Big Mac', 79000, '', 10),
+(5, '', 'burgers', '2024-12-19 02:48:07.000000', 'images/food_images/burgers/chickbg.png', b'1', 'Burger Chicken', 36000, '', 10),
+(6, '', 'burgers', '2024-12-19 02:46:47.000000', 'images/food_images/burgers/doublecheese.png', b'1', 'Burger Double Cheese', 66000, '', 10),
+(7, '', 'burgers', '2024-12-19 02:47:52.000000', 'images/food_images/burgers/fishmayo.png', b'1', 'Burger Fish Cheese', 56000, '', 10),
+(8, '', 'burgers', '2024-12-19 02:46:32.000000', 'images/food_images/burgers/royal.png', b'1', 'Burger Royal', 89000, '', 10),
+(9, '', 'burgers', '2024-12-19 02:48:19.000000', 'images/food_images/burgers/sausage.png', b'1', 'Burger Sausage', 36000, '', 10),
+(10, '', 'burgers', '2024-12-19 03:01:04.000000', 'images/food_images/burgers/specialchick.png', b'1', 'Burger Chicken Special', 69000, '', 100),
+(21, '', 'chickens', '2024-12-19 03:00:57.000000', 'images/food_images/chickens/x1-ga-ran.png', b'1', 'Fried Chicken', 37000, '', 1000),
+(22, '', 'chickens', '2024-12-20 02:02:29.000000', 'images/food_images/chickens/x2-ga-ran.png', b'1', '2 Fried Chicken', 92000, '', 1000),
+(23, '', 'chickens', '2024-12-20 02:01:46.000000', 'images/food_images/chickens/x3-ga-ran.png', b'1', '3 Fried Chickens', 103000, '', 110),
+(24, '', 'chickens', '2024-12-19 03:03:28.000000', 'images/food_images/chickens/x3pcs_chicken_mcwings.png', b'1', '3 Chicken wings', 69000, '', 100),
+(25, '', 'chickens', '2024-12-19 03:04:45.000000', 'images/food_images/chickens/x6-mieng-Ga-vien-Vui-ve.jpg', b'1', '6 Nuggets', 49000, '', 100),
+(26, '', 'chickens', '2024-12-19 03:05:16.000000', 'images/food_images/chickens/x6-wings.png', b'1', '6 Chicken Wings', 125000, '', 100),
+(27, '', 'chickens', '2024-12-19 03:09:41.000000', 'images/food_images/chickens/x9-ga-ran.png', b'1', '9 Fried chickens', 289000, '', 100),
+(28, '', 'chickens', '2024-12-19 03:06:22.000000', 'images/food_images/chickens/x20-mieng-Ga-vien-Vui-ve.jpg', b'1', '20 Nuggets', 121000, '', 100),
+(29, '', 'beverages', '2024-12-20 02:01:53.000000', 'images/food_images/burgers/coke.png', b'1', 'Coca-Cola', 22000, '', 100),
+(30, '', 'beverages', '2024-12-19 03:10:14.000000', 'images/food_images/beverages/dasani_water.png', b'1', 'Water', 22000, '', 100),
+(31, '', 'beverages', '2024-12-19 03:10:37.000000', 'images/food_images/beverages/Fanta.png', b'1', 'Fanta', 22000, '', 100),
+(32, '', 'beverages', '2024-12-19 03:10:55.000000', 'images/food_images/beverages/milk.png', b'1', 'Milk', 22000, '', 1000),
+(33, '', 'beverages', '2024-12-19 03:11:33.000000', 'images/food_images/beverages/Sprite.png', b'1', 'Sprite', 22000, '', 1000),
+(34, '', 'combo', '2024-12-19 03:12:25.000000', 'images/food_images/combo/Combo-2B.jpg', b'1', 'Combo 2B', 179000, '', 1000),
+(35, '', 'combo', '2024-12-19 03:12:50.000000', 'images/food_images/combo/Combo-2C.png', b'1', 'Combo 2C', 189000, '', 1000),
+(36, '', 'combo', '2024-12-19 03:13:13.000000', 'images/food_images/combo/Combo-3A.jpg', b'1', 'Combo 3A', 279000, '', 100);
